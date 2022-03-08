@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     STACK_NAME: "blog-app-stack"
-
+    GO_VERSION: 1.16.5
 phases:
   install:
     runtime-versions:
