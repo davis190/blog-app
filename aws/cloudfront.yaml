@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  pS3BucketName:
+    Type: String
+    Default: clayton-blog-app
+  pACMCertArn:
+    Type: String
+    Default: arn:aws:acm:us-east-1:627844017050:certificate/9f27db59-e39a-4e96-9f20-009b56ffa977
+Resources:
+## Create Cloudfront origin buckets and policies
+  rS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref pS3BucketName
+  rBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties: 
+      Bucket:
+        Ref: rS3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              CanonicalUser: !GetAtt rCloudfrontOriginAccessIdentity.S3CanonicalUserId
+            Action: "s3:GetObject"
+            Resource: !Sub "${rS3Bucket.Arn}/*"
+  rCloudfrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: string-value
+  ## Cloudfront distribution
+  rCloudfrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !Join [".", [!Ref rS3Bucket, "s3.amazonaws.com"] ]
+            Id: resume-app
+            # CustomOriginConfig:
+            #   OriginProtocolPolicy: http-only
+            S3OriginConfig:
+              OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref rCloudfrontOriginAccessIdentity] ]
+        Enabled: 'true'
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 300
+            ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: "/app/index.html"
+          - ErrorCachingMinTTL: 300
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: "/app/index.html"
+        Comment: Cloudfront distribution for resume app
+        DefaultRootObject: index.html
+        # Logging:
+        #   IncludeCookies: 'false'
+        #   Bucket: workerscan-cloudfront-logging-bucket.s3.amazonaws.com
+        #   Prefix: workerscan
+        Aliases:
+          - claytondavis.dev
+          - resume.claytondavis.dev
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - DELETE
+            - GET
+            - HEAD
+            - OPTIONS
+            - PATCH
+            - POST
+            - PUT
+          TargetOriginId: resume-app
+          ForwardedValues:
+            QueryString: 'true'
+          ViewerProtocolPolicy: redirect-to-https
+          # ViewerProtocolPolicy: allow-all
+        PriceClass: PriceClass_100
+        Restrictions:
+          GeoRestriction:
+            RestrictionType: blacklist
+            Locations:
+            - RU # Russia
+            - IS # Iceland
+        ViewerCertificate:
+          AcmCertificateArn: !Ref pACMCertArn
+          # CloudFrontDefaultCertificate: true
+          ## Modern Browsers
+          SslSupportMethod: sni-only
+          ## All browsers - additional charge
+          # SslSupportMethod: vip
+Outputs:
+  CloudfrontDistributionId:
+    Value: !Ref rCloudfrontDistribution
+  Bucket:
+    Value: !Ref rS3Bucket
