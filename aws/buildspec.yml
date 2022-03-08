@@ -10,9 +10,10 @@ phases:
       nodejs: 12
       python: 3.7
     commands:
+      - mkdir hugo-src
+      - cd hugo-src
       - git clone https://github.com/gohugoio/hugo.git
       - cd hugo
-      - go env -w GO111MODULE=auto
       - go install --tags extended
   pre_build:
     commands:
