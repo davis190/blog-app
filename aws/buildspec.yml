@@ -1,0 +1,32 @@
+version: 0.2
+
+env:
+  variables:
+    STACK_NAME: "blog-app-stack"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+      python: 3.7
+    commands:
+      - git clone https://github.com/gohugoio/hugo.git
+      - cd hugo
+      - go install --tags extended
+  pre_build:
+    commands:
+      - chmod +x create-or-update-stack.sh
+      - ./create-or-update-stack.sh us-east-1 ${STACK_NAME} --template-body file://aws/cloudfront.yaml
+  build:
+    commands:
+      - BUCKET=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region us-east-1 --query "Stacks[].Outputs[?OutputKey=='Bucket'].OutputValue" --output text)
+      - hugo
+      - aws s3 sync public/ s3://${BUCKET}/
+  post_build:
+    commands:
+      ##########
+      ## Invalidate cache
+      ##########
+      - CLOUDFRONT_DISTRIBUTION_ID=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region us-east-1 --query "Stacks[].Outputs[?OutputKey=='CloudfrontDistributionId'].OutputValue" --output text)
+      - INVALIDATION_ID=$(aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths /css/style.css /index.html /pdf/resume.pdf --query "Invalidation.Id" --output text)
+      - aws cloudfront wait invalidation-completed --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --id $INVALIDATION_ID

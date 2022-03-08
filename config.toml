@@ -1,0 +1,33 @@
+baseURL = 'http://blog.claytondavis.dev/'
+languageCode = 'en-us'
+title = 'Blog'
+theme = 'hugo-ink'
+
+[params]
+	subtitle = "The blog of an overly opinionated cloud consultant"
+
+	# Optional 64x64 avatar image.
+	avatar = "/images/circle_bw_HeadShot.png"
+
+	# Content types to disable Disqus on.
+	disableDisqusTypes = ["page"]
+	
+	featherIconsCDN = true
+
+	mode = "dark" # "dark" or "auto"
+
+# Nav.
+[[menu.main]]
+name = "All Posts"
+url = "/"
+weight = 1
+
+[[menu.main]]
+name = "Resume"
+url = "https://resume.claytondavis.dev/"
+weight = 2
+
+[[params.social]]
+name = "LinkedIn"
+icon = "linkedin"
+url = "https://www.linkedin.com/in/clayton-davis-17723239/"
