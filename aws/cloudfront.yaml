@@ -5,7 +5,7 @@ Parameters:
     Default: clayton-blog-app
   pACMCertArn:
     Type: String
-    Default: arn:aws:acm:us-east-1:627844017050:certificate/9f27db59-e39a-4e96-9f20-009b56ffa977
+    Default: arn:aws:acm:us-east-1:210557127338:certificate/f2397e58-2489-45fe-a970-91ffe1112f9b
 Resources:
 ## Create Cloudfront origin buckets and policies
   rS3Bucket:
@@ -60,7 +60,7 @@ Resources:
         #   Prefix: workerscan
         Aliases:
           - claytondavis.dev
-          - resume.claytondavis.dev
+          - blog.claytondavis.dev
         DefaultCacheBehavior:
           AllowedMethods:
             - DELETE
