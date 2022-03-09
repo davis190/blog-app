@@ -1,4 +1,4 @@
-baseURL = 'http://blog.claytondavis.dev/'
+baseURL = 'https://blog.claytondavis.dev/'
 languageCode = 'en-us'
 title = 'Blog'
 theme = 'hugo-ink'
