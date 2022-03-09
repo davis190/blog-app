@@ -3,9 +3,6 @@ languageCode = 'en-us'
 title = 'Blog'
 theme = 'hugo-ink'
 
-# Google Analytics 4
-googleAnalyticsID = "G-7HBR1XK054"
-
 [params]
 	subtitle = "The blog of an overly opinionated cloud consultant"
 
@@ -18,6 +15,9 @@ googleAnalyticsID = "G-7HBR1XK054"
 	featherIconsCDN = true
 
 	mode = "dark" # "dark" or "auto"
+
+    # Google Analytics 4
+    googleAnalyticsID = "G-7HBR1XK054"
 
 # Nav.
 [[menu.main]]
