@@ -15,7 +15,9 @@ phases:
       # - git clone https://github.com/gohugoio/hugo.git
       # - cd hugo
       # - go install --tags extended
-      - curl https://github.com/gohugoio/hugo/releases/download/v0.93.3/hugo_0.93.3_Linux-64bit.tar.gz -o hugo.tar.gz
+      - wget -o hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v0.93.3/hugo_0.93.3_Linux-64bit.tar.gz
+      - ls -la
+      - file hugo.tar.gz
       - tar -xf hugo.tar.gz
       - ls
   pre_build:
