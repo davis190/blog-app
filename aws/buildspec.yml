@@ -20,10 +20,13 @@ phases:
       # - file hugo.tar.gz
       # - tar -xf hugo.tar.gz
       # - ls
+      - hugo version
   pre_build:
     commands:
+      - cd aws
       - chmod +x create-or-update-stack.sh
       - ./create-or-update-stack.sh us-east-1 ${STACK_NAME} --template-body file://aws/cloudfront.yaml
+      - cd ../
   build:
     commands:
       - BUCKET=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region us-east-1 --query "Stacks[].Outputs[?OutputKey=='Bucket'].OutputValue" --output text)
