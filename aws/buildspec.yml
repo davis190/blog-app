@@ -14,7 +14,7 @@ phases:
       - cd hugo-src
       - git clone https://github.com/gohugoio/hugo.git
       - cd hugo
-      - go install --tags extended
+      - go install
   pre_build:
     commands:
       - chmod +x create-or-update-stack.sh
