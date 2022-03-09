@@ -26,7 +26,7 @@ phases:
     commands:
       - cd aws
       - chmod +x create-or-update-stack.sh
-      - ./create-or-update-stack.sh us-east-1 ${STACK_NAME} --template-body file://aws/cloudfront.yaml
+      - ./create-or-update-stack.sh us-east-1 ${STACK_NAME} --template-body file://cloudfront.yaml
       - cd ../
   build:
     commands:
