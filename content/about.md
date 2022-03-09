@@ -1,6 +1,5 @@
 ---
 title: "About"
-date: 2022-03-08T13:59:33-06:00
 type: "page"
 ---
 
