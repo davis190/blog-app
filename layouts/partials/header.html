@@ -42,4 +42,7 @@
 	{{- if isset .Site.Params "customjs" -}}
 		{{- range .Site.Params.customJS }}<script src="{{ $.Site.BaseURL }}{{ . }}"></script>{{- end }}
 	{{- end }}
+	{{ if .Site.Params.GoogleAnalyticsID }}
+  		{{ partial "analytics-gtag.html" . }}
+  	{{ end }}
 </head>

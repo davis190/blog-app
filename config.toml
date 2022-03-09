@@ -3,7 +3,8 @@ languageCode = 'en-us'
 title = 'Blog'
 theme = 'hugo-ink'
 
-googleAnalytics = "G-7HBR1XK054"
+# Google Analytics 4
+googleAnalyticsID = "G-7HBR1XK054"
 
 [params]
 	subtitle = "The blog of an overly opinionated cloud consultant"
