@@ -10,11 +10,14 @@ phases:
       nodejs: 12
       python: 3.7
     commands:
-      - mkdir hugo-src
-      - cd hugo-src
-      - git clone https://github.com/gohugoio/hugo.git
-      - cd hugo
-      - go install
+      # - mkdir hugo-src
+      # - cd hugo-src
+      # - git clone https://github.com/gohugoio/hugo.git
+      # - cd hugo
+      # - go install --tags extended
+      - curl https://github.com/gohugoio/hugo/releases/download/v0.93.3/hugo_0.93.3_Linux-64bit.tar.gz -o hugo.tar.gz
+      - tar -xf hugo.tar.gz
+      - ls
   pre_build:
     commands:
       - chmod +x create-or-update-stack.sh
@@ -22,7 +25,7 @@ phases:
   build:
     commands:
       - BUCKET=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region us-east-1 --query "Stacks[].Outputs[?OutputKey=='Bucket'].OutputValue" --output text)
-      - hugo
+      - ./hugo
       - aws s3 sync public/ s3://${BUCKET}/
   post_build:
     commands:
