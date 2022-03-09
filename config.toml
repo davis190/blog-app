@@ -21,14 +21,19 @@ googleAnalyticsID = "G-7HBR1XK054"
 
 # Nav.
 [[menu.main]]
-name = "All Posts"
+name = "Home"
 url = "/"
 weight = 1
 
 [[menu.main]]
+name = "About"
+url = "/about.html"
+weight = 2
+
+[[menu.main]]
 name = "Resume"
 url = "https://resume.claytondavis.dev/"
-weight = 2
+weight = 3
 
 [[params.social]]
 name = "LinkedIn"

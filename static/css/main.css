@@ -9,12 +9,12 @@ body {
 }
 
 a {
-    color: #3700ff;
+    color: #54df77;
     text-decoration: none;
     word-break: break-word;
 }
     a:hover {
-        border-bottom: 2px solid #3700ff;
+        border-bottom: 2px solid #54df77;
     }
 
 html,button,input,select,textarea {
@@ -22,13 +22,13 @@ html,button,input,select,textarea {
 }
 
 ::-moz-selection {
-    background: #3700ff;
+    background: #54df77;
     text-shadow: none;
     color: #fff;
 }
 
 ::selection {
-    background: #3700ff;
+    background: #54df77;
     text-shadow: none;
     color: #fff;
 }
@@ -108,7 +108,7 @@ blockquote {
     font-size: 1.4rem;
     font-family: Georgia,bitstream charter,serif;
     border-left: 3px solid;
-    border-color: #3700ff;
+    border-color: #54df77;
     padding-left: 20px;
 }
 
@@ -175,7 +175,7 @@ ul.flat {
 }
 
 ul.flat li {
-    display: block;
+    display: inline;
     list-style: none;
     margin-left: 0;
 }
@@ -276,7 +276,7 @@ ul {
         color: #333;
     }
     .header nav.social a:hover {
-        color: #3700ff;
+        color: #54df77;
     }
 
 .header .site-description nav {
@@ -354,7 +354,7 @@ ul {
 }
 
 .post .draft-label {
-    color: #3700ff;
+    color: #54df77;
     text-decoration: none;
     padding: 2px 4px;
     border-radius: 4px;
@@ -364,10 +364,10 @@ ul {
 
 .post .tags a {
     display: inline-block;
-    border: 1px solid #3700ff;
+    border: 1px solid #54df77;
     border-radius: 3px;
     padding: 0px 6px;
-    color: #3700ff;
+    color: #54df77;
     line-height: 20px;
     font-size: 0.85em;
     text-decoration: none;
@@ -391,7 +391,7 @@ ul {
         color: #666;
     }
     .footer a:hover {
-        color: #3700ff;
+        color: #54df77;
     }
 
 .tag-cloud {
