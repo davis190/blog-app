@@ -59,7 +59,6 @@ Resources:
         #   Bucket: workerscan-cloudfront-logging-bucket.s3.amazonaws.com
         #   Prefix: workerscan
         Aliases:
-          - claytondavis.dev
           - blog.claytondavis.dev
         DefaultCacheBehavior:
           AllowedMethods:
