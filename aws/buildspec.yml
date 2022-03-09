@@ -20,6 +20,7 @@ phases:
       # - file hugo.tar.gz
       # - tar -xf hugo.tar.gz
       # - ls
+      - chmod +x hugo
       - ./hugo version
   pre_build:
     commands:
