@@ -37,7 +37,7 @@ Resources:
       DistributionConfig:
         Origins:
           - DomainName: !Join [".", [!Ref rS3Bucket, "s3.amazonaws.com"] ]
-            Id: resume-app
+            Id: blog-app
             # CustomOriginConfig:
             #   OriginProtocolPolicy: http-only
             S3OriginConfig:
@@ -47,12 +47,12 @@ Resources:
           - ErrorCachingMinTTL: 300
             ErrorCode: 403
             ResponseCode: 200
-            ResponsePagePath: "/app/index.html"
+            ResponsePagePath: "/index.html"
           - ErrorCachingMinTTL: 300
             ErrorCode: 404
             ResponseCode: 200
-            ResponsePagePath: "/app/index.html"
-        Comment: Cloudfront distribution for resume app
+            ResponsePagePath: "/index.html"
+        Comment: Cloudfront distribution for blog app
         DefaultRootObject: index.html
         # Logging:
         #   IncludeCookies: 'false'
@@ -69,7 +69,7 @@ Resources:
             - PATCH
             - POST
             - PUT
-          TargetOriginId: resume-app
+          TargetOriginId: blog-app
           ForwardedValues:
             QueryString: 'true'
           ViewerProtocolPolicy: redirect-to-https
