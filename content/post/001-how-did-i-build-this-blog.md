@@ -1,6 +1,6 @@
 ---
 title: "How did I build this blog?"
-date: 2022-03-09T17:00:00-06:00
+date: 2022-03-09T12:00:00-06:00
 draft: false
 description: "Wondering how I built this blog and keep it maintained? Look no farther"
 tags: [hugo, builder, tech, pipeline]
