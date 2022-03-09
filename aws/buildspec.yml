@@ -20,7 +20,7 @@ phases:
       # - file hugo.tar.gz
       # - tar -xf hugo.tar.gz
       # - ls
-      - hugo version
+      - ./hugo version
   pre_build:
     commands:
       - cd aws
