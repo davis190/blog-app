@@ -72,8 +72,4 @@ html.dark .highlight {
 
 code {
   background-color: #333;
-  padding: 3px;
-  display: inline-block;
-  max-width: 100%;
-  white-space: normal;
 }

@@ -484,3 +484,12 @@ ul {
         line-height: 1.4em;
     }
 }
+
+code {
+    background-color: #AAA;
+    padding: 3px;
+    display: inline-block;
+    max-width: 100%;
+    white-space: normal;
+  }
+  
