@@ -1,16 +1,20 @@
 ---
 title: "Why Everyone Should Use AWS Control Tower"
 date: 2022-03-21T09:00:00-06:00
-draft: true
+draft: false
 ---
 
 My life for the past 10 months has involved a lot of [AWS Control Tower](https://aws.amazon.com/controltower/). I helped build the [Control Tower Catalyst at Caylent](https://aws.amazon.com/marketplace/pp/prodview-lvbpoeljjvqmo) and have been involved in delivering, selling, or troubleshooting it well over two dozen times at this point. Prior to joining Caylent, I knew at a high level what Control Tower was and why enterprises might use it, but I had very little hands on with it and didn't care for much. It felt like another half baked GA release. But I am here to tell you now that you (<em>points finger through the screen</em>) that my opinions on it have changed, and why everyone (even you, non-enterprise person) should also use Control Tower if you find yourself being a builder/tinkerer inside of AWS. 
+
+![I want you](/images/post02-i-want-you.jpg)
 
 # What is AWS Control Tower?
 
 Let's start with the basics.
 
 [AWS Control Tower](https://aws.amazon.com/controltower/) is a service provided by AWS that is meant to be, wait for it, your Control Tower. It is meant to be a one-stop-shop for creating, managing, and organizing AWS accounts. The goal with AWS Control Tower is to give you the ability to organize your accounts in logical buckets (Organization Units or OU) and then apply broad controls to those buckets for security, governance, or compliance.
+
+![Control Tower](/images/post02-control-tower.png)
 
 After Control Tower went GA, AWS introduced additional automations which make it even more powerful. With the addition of [Customization for Control Tower](https://aws.amazon.com/solutions/implementations/customizations-for-aws-control-tower/) or [Account Factory for Terraform](https://aws.amazon.com/blogs/aws/new-aws-control-tower-account-factory-for-terraform/) (I did a [webinar](https://www.youtube.com/watch?v=cRRDg2tlC6U) on AFT if you are interested), you can control even more infrastructure as code deployments to these accounts. These tools are more or less the same, but they allow you to essentially define a cookie-cutter of what your accounts should look like, and every time you build one, it will come out as a ready-to-use account. Gone are the days of spinning up a shell of an account and requiring someone to manually deploy into it - this is all automated now.
 
@@ -42,6 +46,8 @@ With disposable accounts, account sprawl can be a problem. I use Control Tower a
 
 # But I am a CTO of a very important enterprise company and I somehow stumbled onto your blog.
 
+![Wave](https://media.giphy.com/media/QLKSt3wQqlj7a/giphy.gif)
+
 Great. Welcome. Let me cover a few more of the use cases that I think make this a no-brainer for people like you to adopt.
 
 
@@ -65,7 +71,9 @@ It is pretty common knowledge at this point that the default AWS VPC just doesn'
 
 Okay - I got a little carried away. But in the last 10 months, I have gone from not caring about AWS Control Tower into a Control Tower fanboy. Some might say it is because I get paid to be a fanboy, but it is more than that. Developing and deploying auotmations for Control Tower forced me to get deep into the weeds on the service and the automations that AWS has released to pair with it. They are extremely powerful and provide things that have been missing or been custom-built for a long time. Even for the the individual who just likes to tinker - being able to automate a few things into your accounts means you never have to worry about them again.
 
-As always, would love to hear feedback/comments/questions/concerns. Are there things you want to be hear my opinion about? - blog@claytondavis.dev.
+As always, thank you for reading this. I would love to hear feedback/comments/questions/concerns. Are there things you want to be hear my opinion about? - blog@claytondavis.dev.
+
+![Thank You](https://media.giphy.com/media/ZfK4cXKJTTay1Ava29/giphy.gif)
 
 
 
