@@ -491,5 +491,55 @@ code {
     display: inline-block;
     max-width: 100%;
     white-space: normal;
-  }
-  
+}
+
+button {
+    border: none;
+    padding: 15px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    line-height: 1px;
+    margin: 5px;
+}
+
+input {
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
+.subscribe_text {
+    display:inline-block;
+    font-size: medium;
+    margin: 5px;
+}
+
+.popup-overlay {
+    /*Hides pop-up when there is no "active" class*/
+    visibility: hidden;
+    position: absolute;
+    background: #919191;
+    border: 3px solid #666666;
+    color: white;
+    width: 40%;
+    height: 40%;
+    left: 30%;
+}
+
+.popup-overlay.active {
+    /*displays pop-up when "active" class is present*/
+    visibility: visible;
+    text-align: center;
+}
+
+.popup-content {
+    /*Hides pop-up content when there is no "active" class */
+    visibility: hidden;
+}
+
+.popup-content.active {
+    /*Shows pop-up content when "active" class is present */
+    visibility: visible;
+}
