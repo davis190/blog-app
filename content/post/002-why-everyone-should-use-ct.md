@@ -2,6 +2,8 @@
 title: "Why Everyone Should Use AWS Control Tower"
 date: 2022-03-21T09:00:00-06:00
 draft: false
+description: "Why should you, as an individual tinkering around in AWS, use Control Tower?"
+tags: [builder, control tower, tech, aws]
 ---
 
 My life for the past 10 months has involved a lot of [AWS Control Tower](https://aws.amazon.com/controltower/). I helped build the [Control Tower Catalyst at Caylent](https://aws.amazon.com/marketplace/pp/prodview-lvbpoeljjvqmo) and have been involved in delivering, selling, or troubleshooting it well over two dozen times at this point. Prior to joining Caylent, I knew at a high level what Control Tower was and why enterprises might use it, but I had very little hands on with it and didn't care for much. It felt like another half baked GA release. But I am here to tell you now that you (<em>points finger through the screen</em>) that my opinions on it have changed, and why everyone (even you, non-enterprise person) should also use Control Tower if you find yourself being a builder/tinkerer inside of AWS. 
