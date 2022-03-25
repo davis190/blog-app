@@ -1,7 +1,7 @@
 baseURL = 'https://blog.claytondavis.dev/'
 languageCode = 'en-us'
 title = 'Blog'
-theme = 'hugo-ink'
+
 
 [params]
 	subtitle = "The blog of an overly opinionated cloud consultant"
