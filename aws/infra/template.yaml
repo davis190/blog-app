@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Email List APIs.
+Parameters: 
+    pACMCertificate:
+      Type: String
+      Default: "arn:aws:acm:us-east-1:210557127338:certificate/d5c66d79-ae23-47d5-a1ca-3f86718e5498"
+    pBlogEmailBucketName:
+      Type: String
+      Default: claytondavis-dev-email-list
+
+# https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Runtime: python3.9
+    Timeout: 15
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,*'"
+      AllowOrigin: "'*'"
+
+Resources:
+  ## API
+  rApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+  rDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      CertificateArn: !Ref pACMCertificate
+      DomainName: api.blog.claytondavis.dev
+  rBasePathMapping:
+    Type: 'AWS::ApiGateway::BasePathMapping'
+    Properties:
+      RestApiId: !Ref rApi
+      DomainName: !Ref rDomainName
+  ###################
+  ## APIs
+  ###################
+  rApiEndpoints:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      CodeUri: ./email-list/
+      Description: Function email list related actions.
+      MemorySize: 512
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref rBucket
+          EMAIL_LIST_KEY: 'email-list.txt'
+      Policies:
+        - S3ReadPolicy:
+            BucketName:
+              !Ref pBlogEmailBucketName
+        - S3WritePolicy:
+            BucketName:
+              !Ref pBlogEmailBucketName
+        - SESCrudPolicy:
+            IdentityName: "*"
+      Events:
+        POSTSubscribe:
+          Type: Api
+          Properties:
+            Path: '/api/email/subscribe'
+            Method: post
+            RestApiId: !Ref rApi
+        DELETEUnsubscribe:
+          Type: Api
+          Properties:
+            Path: '/api/email/unsubscribe'
+            Method: delete
+            RestApiId: !Ref rApi
+  rEmailFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.sendEmail
+      CodeUri: ./email-list/
+      Description: Function to send email.
+      MemorySize: 512
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref rBucket
+          EMAIL_LIST_KEY: 'email-list.txt'
+      Policies:
+        - S3ReadPolicy:
+            BucketName:
+              !Ref pBlogEmailBucketName
+        - S3WritePolicy:
+            BucketName:
+              !Ref pBlogEmailBucketName
+        - SESCrudPolicy:
+            IdentityName: "*"
+  rBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref pBlogEmailBucketName
