@@ -519,13 +519,17 @@ input {
 .popup-overlay {
     /*Hides pop-up when there is no "active" class*/
     visibility: hidden;
-    position: absolute;
-    background: #919191;
-    border: 3px solid #666666;
-    color: white;
-    width: 40%;
-    height: 40%;
+    /* position: absolute; */
+    /* background: #919191; */
+    /* border: 3px solid #666666; */
+    color: rgb(235, 78, 78);
+    /* width: 40%; */
+    /* height: 40%; */
     left: 30%;
+}
+
+.popup-overlay p {
+    margin: 0px;
 }
 
 .popup-overlay.active {

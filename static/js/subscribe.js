@@ -10,6 +10,7 @@ $(document).ready(function(){
                 console.log("Done")    
                 // alert("You have been subscribed");
                 $(".popup-overlay, .popup-content").addClass("active");
+                $("#email_input").val("")
             },
             error: function() {
                 console.log("ERROR")
