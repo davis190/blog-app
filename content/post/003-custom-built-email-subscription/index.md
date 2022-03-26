@@ -155,7 +155,7 @@ Regex function to figure out if I got a valid email address. I don't do much err
 
 I like to centralize the API response. This is the function I can call to do that.
 
-# Conclustion
+# Conclusion
 
 A little bit of a different, in detail post here. Hopefully, you enjoyed it. If you did, would love to hear. If you hated it, let me know too. blog@claytondavis.dev
 
