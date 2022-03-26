@@ -24,7 +24,7 @@ phases:
       - aws s3 sync public/ s3://${BUCKET}/
       ## Deploy email subscription
       - cd aws/infra
-      - sam deploy --template-file template.yaml --stack-name blog-email-subscription --region us-east-1 --s3-bucket claytondavis-dev-sam-bucket --capabilities CAPABILITY_IAM
+      - sam deploy --template-file template.yaml --stack-name blog-email-subscription --region us-east-1 --s3-bucket claytondavis-dev-sam-bucket --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset
       - cd ../..
   post_build:
     commands:

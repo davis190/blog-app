@@ -8,11 +8,13 @@ $(document).ready(function(){
             dataType: 'text',
             success: function() {
                 console.log("Done")    
-                // alert("You have been subscribed");
+                $(".popup-overlay, .popup-content p").text("That you for subscribing "+$("#email_input").val());
                 $(".popup-overlay, .popup-content").addClass("active");
                 $("#email_input").val("")
             },
             error: function() {
+                $(".popup-overlay, .popup-content").addClass("active");
+                $(".popup-overlay, .popup-content p").text("Invalid Email");
                 console.log("ERROR")
             }
         });

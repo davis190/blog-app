@@ -29,7 +29,7 @@ Other services used as part of this include Amazon Certificate Manager for SSL, 
 
 Take all of those services, shaken, not stirred, and you end up with something like this.
 
-![Arch Diagram](/images/post03-arch-diagram.png)
+![Arch Diagram](post03-arch-diagram.png)
 
 # The Nitty Gritty
 
