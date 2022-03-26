@@ -44,27 +44,29 @@ This is triggered from API Gateway on a `POST` to `/api/email/subscribe`
 Start with downloading the file from S3. This is the file that contains the subscription list. Basic text file - one email per line
 
 ```
-client = boto3.client('s3')
-email_file = '/tmp/email-list.txt'
-client.download_file(os.environ['BUCKET_NAME'], os.environ['EMAIL_LIST_KEY'], email_file)
+client = boto3.client('s3') 
+email_file = '/tmp/email-list.txt' 
+client.download_file(os.environ['BUCKET_NAME'], os.environ['EMAIL_LIST_KEY'], email_file) 
 ```
 
 Loop through the downloaded file and figure out if the email is already subscribed. No need to have people receive double emails.
+
 ```
-exists = False
-file_input = open(email_file, 'r')
-Lines = file_input.readlines()
-for line in Lines:
-    if line.strip() == email.strip():
-        exists = True
+exists = False 
+file_input = open(email_file, 'r') 
+Lines = file_input.readlines() 
+for line in Lines: 
+    if line.strip() == email.strip(): 
+        exists = True 
 ```
 
 If they were not already subscribed, then add them to the list in the file. Don't forget the new line.
+
 ```
-if not exists:
-    file_ouptut = open(email_file, 'a')
-    file_ouptut.writelines("\n"+email.strip())
-    file_ouptut.close()
+if not exists: 
+    file_ouptut = open(email_file, 'a') 
+    file_ouptut.writelines("\n"+email.strip()) 
+    file_ouptut.close() 
 ```
 
 Finally, push the file back into S3

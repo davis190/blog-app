@@ -490,7 +490,7 @@ code {
     padding: 3px;
     display: inline-block;
     max-width: 100%;
-    white-space: normal;
+    /* white-space: normal; */
 }
 
 button {
