@@ -6,7 +6,7 @@ title = 'Clayton Davis Blog'
 [params]
 	subtitle = "The blog of an overly opinionated cloud consultant"
     description = 'The blog of an overly opinionated cloud consultant'
-    images = ['/images/circle_bw_HeadShot.png']
+    images = ['/images/BlogLogo.png']
 
 	# Optional 64x64 avatar image.
 	avatar = "/images/circle_bw_HeadShot.png"
