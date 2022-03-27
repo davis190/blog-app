@@ -22,7 +22,7 @@ Enter [Hugo](https://gohugo.io/). It is a markdown, folder based website builder
 
 ## Pipeline and Automation
 
-![Blog Pipeline](/images/post01-BlogPipeline.png)
+![Blog Pipeline](post01-feature-BlogPipeline.png)
 
 Automation for all the things is always my goal. I tend to default to AWS built in tools because I am already paying for AWS and they are simple and easy to use. This is a fairly similar pattern that I use for other personal projects because it makes maintaining them a breeze. GitHub repository, hooked up to AWS CodePipeline and CodeBuild and auto triggered on a commit into `main`.
 
