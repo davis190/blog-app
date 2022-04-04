@@ -69,7 +69,7 @@ I am sure if you are an enterprise you have some expensive SIEM system, but what
 
 It is pretty common knowledge at this point that the default AWS VPC just doesn't cut it. Imagine if every time you spun up an account, you could deploy a best practices VPC into that account so that it is ready to use immediately. What if you could also establish interconnectivity to other VPCs? This is all possible using AWS Control Tower and these automations.
 
-# Conclussion
+# Conclusion
 
 Okay - I got a little carried away. But in the last 10 months, I have gone from not caring about AWS Control Tower into a Control Tower fanboy. Some might say it is because I get paid to be a fanboy, but it is more than that. Developing and deploying auotmations for Control Tower forced me to get deep into the weeds on the service and the automations that AWS has released to pair with it. They are extremely powerful and provide things that have been missing or been custom-built for a long time. Even for the the individual who just likes to tinker - being able to automate a few things into your accounts means you never have to worry about them again.
 
