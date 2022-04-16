@@ -69,6 +69,33 @@ def unsubscribe(email):
 
     client.upload_file(new_file, os.environ['BUCKET_NAME'], os.environ['EMAIL_LIST_KEY'])
 
+    ses_client = boto3.client('ses')
+    print("Emailing "+email.strip())
+    response = ses_client.send_email(
+        Source="blog-notifications@claytondavis.dev",
+        Destination={
+            'ToAddresses': [
+                email.strip(),
+            ]
+        },
+        Message={
+            'Subject': {
+                'Data': "Unsubscribed - blog.claytondavis.dev",
+                'Charset': 'UTF-8'
+            },
+            'Body': {
+                'Html': {
+                    'Data': "You have been unsubscribed - come back soon!",
+                    'Charset': 'UTF-8'
+                }
+            }
+        },
+        ReplyToAddresses=[
+            'blog@claytondavis.dev',
+        ]
+    )
+    print(response)
+
     return True
 
 def subscribe(email):
@@ -90,6 +117,33 @@ def subscribe(email):
         file_ouptut.close()
 
     client.upload_file(email_file, os.environ['BUCKET_NAME'], os.environ['EMAIL_LIST_KEY'])
+
+    ses_client = boto3.client('ses')
+    print("Emailing "+email.strip())
+    response = ses_client.send_email(
+        Source="blog-notifications@claytondavis.dev",
+        Destination={
+            'ToAddresses': [
+                email.strip(),
+            ]
+        },
+        Message={
+            'Subject': {
+                'Data': "Thank you for subscribing - blog.claytondavis.dev",
+                'Charset': 'UTF-8'
+            },
+            'Body': {
+                'Html': {
+                    'Data': "Thank you for subscribing! <br /><br /><a href=\"https://blog.claytondavis.dev/unsubscribe/index.html?email="+line+"\">Unsubscribe</a>",
+                    'Charset': 'UTF-8'
+                }
+            }
+        },
+        ReplyToAddresses=[
+            'blog@claytondavis.dev',
+        ]
+    )
+    print(response)
 
     return True
 
