@@ -76,6 +76,9 @@ def unsubscribe(email):
         Destination={
             'ToAddresses': [
                 email.strip(),
+            ],
+            'BccAddresses': [
+                'blog@claytondavis.dev',
             ]
         },
         Message={
@@ -125,6 +128,9 @@ def subscribe(email):
         Destination={
             'ToAddresses': [
                 email.strip(),
+            ],
+            'BccAddresses': [
+                'blog@claytondavis.dev',
             ]
         },
         Message={
@@ -168,6 +174,9 @@ def sendEmail(event, context):
                 Destination={
                     'ToAddresses': [
                         line.strip(),
+                    ],
+                    'BccAddresses': [
+                        'blog@claytondavis.dev',
                     ]
                 },
                 Message={
