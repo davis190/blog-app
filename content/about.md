@@ -3,15 +3,30 @@ title: "About"
 type: "page"
 ---
 
-Hello World!
+Hello world!
 
-My name is Clayton. I have spent the last 6 years of my life doing AWS cloud consulting for a few different companies. I am currently with [Caylent](https://caylent.com/) as a Delivery Manager. I started off in engineering, worked my way through architecture, and have most recently found myself in this delivery manager role where I focus more on people development and client management. At this point, I have worked on well over 50 different client environments solving a vast array of problems. Sometimes I solve very challenging technical issues, other times I solve very challenging layer 8 problems. 
+I’m Clayton Davis—a seasoned AWS cloud consultant, technical leader and practice owner with over decade of hands-on experience helping organizations harness the power of the AWS cloud. Currently, I serve as Practice Leader for Software Engineering at [Caylent](https://caylent.com/), where I guide a talented team in delivering high-impact solutions across:
 
-Recently, I have found myself involved in a lot of high-level conversations with clients about their direction in the cloud and have realized that consulting has made me extremely opinionated about many topics. <em>Enter blog</em>. My goal is to use this blog to share my opinions about things as they happen, also as a way to document my thoughts on a particular topic at a particular time because the cloud continues to evolve and the tools you use and the methodologies you use to manage it do as well.
+- **Application Modernization:** Re-architecting legacy systems for scale, resilience and reduced operational cost on AWS.  
+- **Product Development:** Designing and building green-field SaaS applications, from MVP through production, using serverless, container and cloud-native patterns.  
+- **GenAI Product Development:** Developing AI-driven features and services—chatbots, recommendation engines, code-generation tools—leveraging AWS Bedrock, OpenAI and other leading platforms.  
+- **AI Accelerated Delivery:** Crafting frameworks and pipelines that compress release cycles—from months to weeks—while embedding security, compliance and quality gates.
 
-Prior to my days in consulting I went to school to be a network engineer, spent some time in a management focused leadership program, and played buzzword bingo in a developer/devops role focused on building microservices. My background is a bit all over the place, but so is the cloud, so it aligns nicely.
+Over the years, I’ve partnered with more than 500 clients—from nimble startups to Fortune-scale enterprises—tackling everything from deep infrastructure challenges (think cross-account IAM, complex VPC architectures, large-scale data migrations) to application development at scale (microservices design, cloud-native CI/CD) and “layer-8” problems like organizational alignment and delivery process re-engineering.  
 
-I have never been a blogger before, so giving this a try. My goal is to try and get something posted monthly. Opinionated clients may cause me to post more often. We will see what happens. One of my favorite quotes that I think applies to a lot of things in the tech space is “Perfection is the enemy of progress.”. With that in mind we are just going to see where this takes us.
+### Why I Write 
 
-Please feel free to reach out if there is anything I can do for you. blog@claytondavis.dev
+In both boardroom strategy sessions and war-room troubleshooting calls, I form strong opinions about how AI, DevOps and cloud best practices intersect—and evolve—at lightning speed. This blog is my living notebook: a place to share real-world lessons, challenge conventional wisdom and document my thinking on emerging cloud and AI trends.
+
+### A Bit of Backstory  
+
+- **Network Foundations:** My career started in network engineering—designing and troubleshooting enterprise LAN/WAN environments.  
+- **DevOps & Microservices:** I pivoted into DevOps, building and shipping microservice-driven applications on AWS.  
+- **Leadership Development:** A leadership-focused management program sharpened my people-skills and strategic thinking.  
+- **Consulting Journey:** Since 2015, I’ve navigated through engineering, architecture, delivery management and now practice leadership—each role adding new layers of insight.
+
+### On Imperfection & Progress  
+I live by one guiding principle: “Perfection is the enemy of progress.” That keeps me shipping, iterating and learning—and it’s exactly what this blog will do. I aim to publish thoughtful pieces at least once a month, though you might see bonus posts when a hot topic or opinionated client conversation ignites something fresh.
+
+I’d love to hear your thoughts or help solve your toughest cloud and AI challenges—drop me a line anytime at [blog@claytondavis.dev](mailto:blog@claytondavis.dev). Let’s keep moving forward together!  
 
