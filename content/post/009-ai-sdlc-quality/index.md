@@ -6,6 +6,8 @@ description: "As we continue to look at the world of software development with A
 tags: [GenAI, LLM, AI SDLC, SDLC, Quality Engineering]
 ---
 
+You can see part 1 [here](/post/008-ai-sdlc-hybrid-approach/index.html)
+
 **“Ship faster, break… nothing.”**
 
 In Part 1 we argued that AI collapses the gap between strategy and execution. The obvious next question: **How do we keep quality high when code ships every hour?** This post unpacks why classical Test-Driven Development (TDD) isn’t dead—but it is mutating—and how richer, AI-refined requirements become the new guardrail against hallucinations and regressions.

@@ -73,3 +73,5 @@ In short, AI hasn’t replaced strategy; it’s **re-sequenced** it.
 
 Next up in Part 2: *Quality in the Age of LLMs—why test-driven development isn’t dead but evolving, and how revamped requirements help tame hallucinations.*
 
+You can see part 2 [here](post/009-ai-sdlc-quality/index.html)
+
