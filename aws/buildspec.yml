@@ -20,7 +20,7 @@ phases:
   build:
     commands:
       - BUCKET=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region us-east-1 --query "Stacks[].Outputs[?OutputKey=='Bucket'].OutputValue" --output text)
-      - ./hugo -D
+      - ./hugo -D --buildDrafts
       - aws s3 sync public/ s3://${BUCKET}/
       ## Deploy email subscription
       - cd aws/infra
