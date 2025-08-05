@@ -1,7 +1,7 @@
 ---
 title: "Beyond Story Points: How to Prove Productivity Gains in an AI-Enabled SDLC"
 date: 2025-08-11T08:00:00-05:00
-draft: false
+draft: true
 description: "In a world of AI Software development, how do we measure productivity? Are we really getting faster?"
 tags: [GenAI, LLM, AI-SDLC, SDLC, Productivity]
 ---
