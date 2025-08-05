@@ -7,9 +7,10 @@ description: "In a world of AI Software development, how do we measure productiv
 tags: [GenAI, LLM, AI-SDLC, SDLC, Productivity]
 ---
 
-## ****
 
-*Third instalment in our “AI-Powered Engineering” series*
+*Third instalment in the “AI-Powered Engineering” series*
+
+You can see part 1 [here](/post/008-ai-sdlc-hybrid-approach/index.html) and part 2 [here](/post/009-ai-sdlc-quality/index.html)
 
 **TL;DR**
 
