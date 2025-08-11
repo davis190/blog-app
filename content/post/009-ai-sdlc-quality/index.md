@@ -88,7 +88,8 @@ AI hasn’t killed testing; it has **compressed and inverted** it. Quality now e
 
 **Prompt → Code → Human click → Auto-tests → Metrics → Next prompt**
 
-In **Part 3** we’ll talk about how you measure productiivy in an AI tooling world.
+In **Part 3** we’ll talk about how you measure productiivy in an AI tooling world. You can see part 3 [here](/post/010-ai-sdlc-measuring-productivity/index.html)
 
 Stay tuned—your deployment frequency (and your sleep schedule) may depend on it.
+
 
