@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+{{ partial "header.html" . }}
+<body>
+	<div class="container wrapper">
+		{{ partial "head.html" . }}
+
+		<div class="post">
+			<div class="post-header">
+				<div class="matter">
+					<h1 class="title">{{ .Title }}</h1>
+				</div>
+			</div>
+
+			<div class="markdown">
+				{{ .Content }}
+			</div>
+
+			<div class="email-action" data-action="{{ .Params.action }}">
+				<p class="email-action-message" role="status" aria-live="polite"></p>
+				<button type="button" class="email-action-button" hidden></button>
+			</div>
+		</div>
+	</div>
+	{{ partial "footer.html" . }}
+</body>
+</html>

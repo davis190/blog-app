@@ -3,7 +3,7 @@ title: "From Strategy-Led to Hybrid: How AI Is Re-Wiring the First Mile of Softw
 date: 2025-07-28T08:00:00-05:00
 draft: false
 description: "The world of software development is going through a radical shift with AI. How we approach and start a project is no exception. Things are shifting from the traditional strategy led approach to hybrid approach."
-tags: [GenAI, LLM, AI SDLC, SDLC, Strategy]
+tags: [GenAI, LLM, AI-SDLC, SDLC, Strategy]
 ---
 
 ### **Introduction: Planning vs. Building, Redux**

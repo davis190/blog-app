@@ -3,6 +3,15 @@ languageCode = 'en-us'
 title = 'Clayton Davis Blog'
 
 
+# "Keep reading" suggestions at the end of each post are matched on tags.
+[related]
+	includeNewer = true
+	threshold = 30
+	toLower = true
+	[[related.indices]]
+		name = "tags"
+		weight = 100
+
 [params]
 	subtitle = "The blog of an overly opinionated cloud consultant"
     description = 'The blog of an overly opinionated cloud consultant'
@@ -10,6 +19,10 @@ title = 'Clayton Davis Blog'
 
 	# Optional 64x64 avatar image.
 	avatar = "/images/circle_bw_HeadShot.png"
+
+	# Browser tab / home-screen icons (generated from the avatar).
+	favicon = "/images/favicon.png"
+	appleTouchIcon = "/images/apple-touch-icon.png"
 
 	# Content types to disable Disqus on.
 	disableDisqusTypes = ["page"]

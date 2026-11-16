@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 {{ partial "header.html" . }}
 
 <body>
@@ -23,6 +23,8 @@
 			{{- end -}}
 			{{ template "partials/paginator.html" . }}
 		</ul>
+
+		{{ partial "subscribe.html" . }}
 	</div>
 
 	{{ partial "footer.html" . }}

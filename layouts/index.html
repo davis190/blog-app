@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html {{- if (eq .Site.Params.mode "dark") -}}class="dark"{{ end }}>
+<html lang="en"{{ if eq .Site.Params.mode "dark" }} class="dark"{{ end }}>
 {{ partial "header.html" . }}
 <body>
 	<div class="container wrapper">
@@ -17,6 +17,7 @@
 				{{ template "partials/paginator.html" . }}
 			</div>
 		</div>
+		{{ partial "subscribe.html" . }}
 	</div>
 	{{ partial "footer.html" . }}
 </body>

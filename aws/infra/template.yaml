@@ -1,19 +1,57 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: Email List APIs.
-Parameters: 
+Parameters:
     pACMCertificate:
       Type: String
       Default: "arn:aws:acm:us-east-1:210557127338:certificate/d5c66d79-ae23-47d5-a1ca-3f86718e5498"
     pBlogEmailBucketName:
       Type: String
       Default: claytondavis-dev-email-list
+    pSiteBucketName:
+      Type: String
+      Description: Bucket the Hugo site is synced to (created by cloudfront.yaml). The new-post sender reads the RSS feed from here.
+      Default: clayton-blog-app
+    pSiteUrl:
+      Type: String
+      Default: "https://blog.claytondavis.dev"
+    pFromAddress:
+      Type: String
+      Description: Shown as the sender. The display name is what appears in the inbox.
+      Default: "Clayton Davis Blog <blog-notifications@claytondavis.dev>"
+    pOwnerAddress:
+      Type: String
+      Description: Gets the BCC on new subscriptions/unsubscribes and a report after each new-post email.
+      Default: "blog@claytondavis.dev"
+    pAllowLegacyUnsubscribe:
+      Type: String
+      Description: Emails sent before signed links existed have unsubscribe links containing the bare address. Set to "false" once those are no longer a concern.
+      AllowedValues: ["true", "false"]
+      Default: "true"
+    pNotifierMaxAgeDays:
+      Type: Number
+      Description: Only posts dated within this many days are emailed. Older ones are recorded as already handled.
+      Default: 3
+    pNotifierDryRun:
+      Type: String
+      Description: When "true" the new-post sender logs what it would do and sends nothing.
+      AllowedValues: ["true", "false"]
+      Default: "false"
 
 # https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Runtime: python3.9
+    Runtime: python3.13
     Timeout: 15
+    Environment:
+      Variables:
+        BUCKET_NAME: !Ref rBucket
+        EMAIL_LIST_KEY: 'email-list.txt'
+        SIGNING_SECRET_ARN: !Ref rLinkSigningSecret
+        SITE_URL: !Ref pSiteUrl
+        FROM_ADDRESS: !Ref pFromAddress
+        OWNER_ADDRESS: !Ref pOwnerAddress
+        ALLOW_LEGACY_UNSUBSCRIBE: !Ref pAllowLegacyUnsubscribe
   Api:
     Cors:
       AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
@@ -26,6 +64,12 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
+      # Every subscribe call sends an email to an address the caller chose, so cap the rate.
+      MethodSettings:
+        - ResourcePath: '/*'
+          HttpMethod: '*'
+          ThrottlingRateLimit: 2
+          ThrottlingBurstLimit: 5
   rDomainName:
     Type: AWS::ApiGateway::DomainName
     Properties:
@@ -37,6 +81,17 @@ Resources:
       RestApiId: !Ref rApi
       DomainName: !Ref rDomainName
   ###################
+  ## Signing key for confirm/unsubscribe links. Don't rotate or delete it casually:
+  ## doing so invalidates every unsubscribe link in emails already sent.
+  ###################
+  rLinkSigningSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: HMAC key that signs the confirm/unsubscribe links in blog emails.
+      GenerateSecretString:
+        PasswordLength: 48
+        ExcludePunctuation: true
+  ###################
   ## APIs
   ###################
   rApiEndpoints:
@@ -46,24 +101,26 @@ Resources:
       CodeUri: ./email-list/
       Description: Function email list related actions.
       MemorySize: 512
-      Environment:
-        Variables:
-          BUCKET_NAME: !Ref rBucket
-          EMAIL_LIST_KEY: 'email-list.txt'
       Policies:
-        - S3ReadPolicy:
-            BucketName:
-              !Ref pBlogEmailBucketName
-        - S3WritePolicy:
-            BucketName:
-              !Ref pBlogEmailBucketName
-        - SESCrudPolicy:
-            IdentityName: "*"
+        - S3CrudPolicy:
+            BucketName: !Ref pBlogEmailBucketName
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref rLinkSigningSecret
+        - Statement:
+            - Effect: Allow
+              Action: ses:SendEmail
+              Resource: '*'
       Events:
         POSTSubscribe:
           Type: Api
           Properties:
             Path: '/api/email/subscribe'
+            Method: post
+            RestApiId: !Ref rApi
+        POSTConfirm:
+          Type: Api
+          Properties:
+            Path: '/api/email/confirm'
             Method: post
             RestApiId: !Ref rApi
         DELETEUnsubscribe:
@@ -77,22 +134,79 @@ Resources:
     Properties:
       Handler: index.sendEmail
       CodeUri: ./email-list/
-      Description: Function to send email.
+      Description: 'Manually send a one-off email to the whole list. Event is {"subject": "...", "body": "<html>"}.'
       MemorySize: 512
-      Environment:
-        Variables:
-          BUCKET_NAME: !Ref rBucket
-          EMAIL_LIST_KEY: 'email-list.txt'
+      Timeout: 300
       Policies:
         - S3ReadPolicy:
-            BucketName:
-              !Ref pBlogEmailBucketName
-        - S3WritePolicy:
-            BucketName:
-              !Ref pBlogEmailBucketName
-        - SESCrudPolicy:
-            IdentityName: "*"
+            BucketName: !Ref pBlogEmailBucketName
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref rLinkSigningSecret
+        - Statement:
+            - Effect: Allow
+              Action: ses:SendEmail
+              Resource: '*'
+  ###################
+  ## Emails subscribers when a new post appears in the site's RSS feed
+  ###################
+  rNewPostNotifier:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: notify.handler
+      CodeUri: ./email-list/
+      Description: Emails subscribers once per new blog post.
+      MemorySize: 256
+      Timeout: 300
+      # A failed run must not be retried automatically: it could email everyone twice.
+      # The next scheduled run picks up where this one left off.
+      EventInvokeConfig:
+        MaximumRetryAttempts: 0
+      Environment:
+        Variables:
+          SITE_BUCKET: !Ref pSiteBucketName
+          FEED_KEY: 'index.xml'
+          NOTIFY_STATE_KEY: 'sent-posts.json'
+          MAX_AGE_DAYS: !Ref pNotifierMaxAgeDays
+          DRY_RUN: !Ref pNotifierDryRun
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref pSiteBucketName
+        - S3CrudPolicy:
+            BucketName: !Ref pBlogEmailBucketName
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref rLinkSigningSecret
+        - Statement:
+            - Effect: Allow
+              Action: ses:SendEmail
+              Resource: '*'
+      Events:
+        # ScheduleV2 (EventBridge Scheduler) so the times stay put across daylight saving.
+        Scheduled:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: cron(0 9,12,17 * * ? *)
+            ScheduleExpressionTimezone: America/Chicago
+            RetryPolicy:
+              MaximumRetryAttempts: 0
   rBucket:
     Type: 'AWS::S3::Bucket'
+    # Holds the subscriber list. Keep it if the stack is ever deleted.
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       BucketName: !Ref pBlogEmailBucketName
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+Outputs:
+  EmailFunctionName:
+    Description: 'Invoke with {"subject": "...", "body": "<html>"} to email the whole list.'
+    Value: !Ref rEmailFunction
+  NewPostNotifierName:
+    Description: Scheduled function that announces new posts.
+    Value: !Ref rNewPostNotifier

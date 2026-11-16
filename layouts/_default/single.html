@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 {{ partial "header.html" . }}
 <body>
 	<div class="container wrapper">
@@ -11,48 +11,39 @@
 					<div class="meta">
 						<div class="date">
 							<span class="day">{{ dateFormat "02" .Date }}</span>
-							<span class="rest">{{ if $.Site.Data.month }}{{ index $.Site.Data.month (printf "%d" .Date.Month) }} {{ .Date.Year }}{{ else }}{{ dateFormat "Jan 2006" .Date }}{{ end }}</span>
+							<span class="rest">{{ dateFormat "Jan 2006" .Date }}</span>
 						</div>
 					</div>
 				{{ end }}
 				<div class="matter">
 					<h1 class="title">{{ .Title }}</h1>
+					{{ if eq .Type "post" }}
+						<div class="post-meta">{{ .ReadingTime }} min read</div>
+					{{ end }}
 				</div>
 			</div>
-					
+
 			<div class="markdown">
 				{{ .Content }}
 			</div>
 
-			<div class="tags">
-				{{ if ne .Type "page" }}
-					{{ if gt .Params.tags 0 }}
-						<ul class="flat">
-							{{ range .Params.tags }}
-							<li><a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}/index.html">{{ . }}</a></li>
-							{{ end }}
-						</ul>
-					{{ end }}
-				{{ end }}
-			</div>
+			{{ with .Params.tags }}
+				<div class="tags">
+					<ul class="flat">
+						{{ range . }}
+						<li><a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}/index.html">{{ . }}</a></li>
+						{{ end }}
+					</ul>
+				</div>
+			{{ end }}
 
-			{{- if .Site.DisqusShortname -}}
-			{{- $.Scratch.Set "isDisqus" true -}}
+			{{ if eq .Type "post" }}
+				{{ partial "post-nav.html" . }}
+			{{ end }}
 
-			{{- if and (isset .Params "type") (in .Site.Params.disableDisqusTypes .Params.type) -}}
-				{{- $.Scratch.Set "isDisqus" false -}}
-			{{- end -}}
-
-			{{- if and (isset .Params "disqus") (eq .Params.disqus false) -}}
-				{{- $.Scratch.Set "isDisqus" false -}}
-			{{- else if and (isset .Params "disqus") (eq .Params.disqus true) -}}
-				{{- $.Scratch.Set "isDisqus" true -}}
-			{{- end -}}
-
-			{{- if eq ($.Scratch.Get "isDisqus") true -}}
-			{{- partial "disqus.html" . -}}
-			{{- end -}}
-			{{- end -}}
+			{{ if ne .Params.subscribe false }}
+				{{ partial "subscribe.html" . }}
+			{{ end }}
 		</div>
 	</div>
 	{{ partial "footer.html" . }}

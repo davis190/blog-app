@@ -3,7 +3,7 @@ title: "Part 2 — Quality in the Age of LLMs"
 date: 2025-08-04T08:00:00-05:00
 draft: false
 description: "As we continue to look at the world of software development with AI, quality is always the first topic to come up. How do you know that you are producing quality. "
-tags: [GenAI, LLM, AI SDLC, SDLC, Quality Engineering]
+tags: [GenAI, LLM, AI-SDLC, SDLC, Quality Engineering]
 ---
 
 You can see part 1 [here](/post/008-ai-sdlc-hybrid-approach/index.html)

@@ -1,198 +1,114 @@
-import boto3
-import os
-import json
-import re
+import base64
+
+import common
+
 
 def handler(event, context):
-    print(event)
-    print(event['body'])
+    route = ROUTES.get((event.get("httpMethod"), event.get("resource")))
+    if route is None:
+        return api_response("Not found", 404)
 
-    if event['httpMethod'] == "DELETE":
-        if check(event['body']):
-            if event['resource'] == "/api/email/unsubscribe":
-                unsubscribe(event['body'])
-                return api_response("Success", 200)
-            else:
-                return api_response("Failure", 404)
-        else:
-            return api_response("Invalid email", 400)
-    elif event['httpMethod'] == "POST":
-        if check(event['body']):
-            if event['resource'] == "/api/email/subscribe":
-                subscribe(event['body'])
-                return api_response("Success", 200)
-            else:
-                return api_response("Failure", 404)
-        else:
-            return api_response("Invalid email", 400)
-    else:
-        return api_response("Failure", 404)
+    body = event.get("body") or ""
+    if event.get("isBase64Encoded"):
+        body = base64.b64decode(body).decode("utf-8")
+    print("%s %s" % (event["httpMethod"], event["resource"]))
+    return route(body.strip())
 
-
-def check(email):
-    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-    if(re.fullmatch(regex, email)):
-        return True
-    else:
-        return False
 
 def api_response(text, code):
-    outcome = {
-        "isBase64Encoded": 'false',
+    return {
+        "isBase64Encoded": False,
         "statusCode": code,
         "headers": {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': '*',
-            'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
         },
-        "body": text
+        "body": text,
     }
 
-    return outcome
 
-def unsubscribe(email):
-    print("Unsubscribe: "+email)
-    client = boto3.client('s3')
-    output_file = '/tmp/email-list.txt'
-    new_file = '/tmp/email-list-new.txt'
-    client.download_file(os.environ['BUCKET_NAME'], os.environ['EMAIL_LIST_KEY'], output_file)
-    
-    file_input = open(output_file, 'r')
-    Lines = file_input.readlines()
-    
-    file_ouptut = open(new_file, 'w')
-    for line in Lines:
-        if line.strip() != email.strip():
-            file_ouptut.writelines(line)
-    file_ouptut.close()
+def subscribe(body):
+    """Emails a confirmation link. Nothing is added to the list until it's clicked."""
+    email = common.clean_email(body)
+    if not email:
+        return api_response("Invalid email", 400)
 
-    client.upload_file(new_file, os.environ['BUCKET_NAME'], os.environ['EMAIL_LIST_KEY'])
-
-    ses_client = boto3.client('ses')
-    print("Emailing "+email.strip())
-    response = ses_client.send_email(
-        Source="blog-notifications@claytondavis.dev",
-        Destination={
-            'ToAddresses': [
-                email.strip(),
-            ],
-            'BccAddresses': [
-                'blog@claytondavis.dev',
-            ]
-        },
-        Message={
-            'Subject': {
-                'Data': "Unsubscribed - blog.claytondavis.dev",
-                'Charset': 'UTF-8'
-            },
-            'Body': {
-                'Html': {
-                    'Data': "You have been unsubscribed - come back soon!",
-                    'Charset': 'UTF-8'
-                }
-            }
-        },
-        ReplyToAddresses=[
-            'blog@claytondavis.dev',
-        ]
+    token = common.make_token("confirm", email, common.CONFIRM_TTL_SECONDS)
+    html_body, text_body = common.message(
+        [
+            "Thanks for subscribing to the blog! Please confirm your email address "
+            "so I know it was really you.",
+            "This link expires in 3 days. If you didn't sign up, you can ignore this email.",
+        ],
+        button=("Confirm subscription", common.page_link("confirm", token)),
     )
-    print(response)
+    common.send_email(email, "Confirm your subscription - blog.claytondavis.dev", html_body, text_body)
+    # Same answer whether or not the address is already subscribed.
+    return api_response("Success", 200)
 
-    return True
 
-def subscribe(email):
-    print("Subscribe: "+email)
-    client = boto3.client('s3')
-    email_file = '/tmp/email-list.txt'
-    client.download_file(os.environ['BUCKET_NAME'], os.environ['EMAIL_LIST_KEY'], email_file)
-    
-    exists = False
-    file_input = open(email_file, 'r')
-    Lines = file_input.readlines()
-    for line in Lines:
-        if line.strip() == email.strip():
-            exists = True
+def confirm(body):
+    email = common.read_token(body, "confirm")
+    if not email:
+        return api_response("Invalid or expired link", 400)
 
-    if not exists:
-        file_ouptut = open(email_file, 'a')
-        file_ouptut.writelines("\n"+email.strip())
-        file_ouptut.close()
-
-    client.upload_file(email_file, os.environ['BUCKET_NAME'], os.environ['EMAIL_LIST_KEY'])
-
-    ses_client = boto3.client('ses')
-    print("Emailing "+email.strip())
-    response = ses_client.send_email(
-        Source="blog-notifications@claytondavis.dev",
-        Destination={
-            'ToAddresses': [
-                email.strip(),
+    if common.add_subscriber(email):
+        html_body, text_body = common.message(
+            [
+                "You're subscribed. Thanks for signing up!",
+                "There's no schedule and no spam. I'll just email you when I publish something new.",
+                "If you ever want to talk about something I wrote, reply to this email. It comes straight to me.",
+                "Clayton",
             ],
-            'BccAddresses': [
-                'blog@claytondavis.dev',
-            ]
-        },
-        Message={
-            'Subject': {
-                'Data': "Thank you for subscribing - blog.claytondavis.dev",
-                'Charset': 'UTF-8'
-            },
-            'Body': {
-                'Html': {
-                    'Data': "Thank you for subscribing! <br /><br /><a href=\"https://blog.claytondavis.dev/unsubscribe/index.html?email="+line+"\">Unsubscribe</a>",
-                    'Charset': 'UTF-8'
-                }
-            }
-        },
-        ReplyToAddresses=[
-            'blog@claytondavis.dev',
-        ]
-    )
-    print(response)
+            button=("Read the blog", common.site_url() + "/"),
+            footer=common.unsubscribe_footer(email),
+        )
+        common.send_email(email, "You're subscribed - blog.claytondavis.dev", html_body, text_body, bcc_owner=True)
+    return api_response("Success", 200)
 
-    return True
+
+def unsubscribe(body):
+    email = common.read_token(body, "unsubscribe")
+    # Links in emails sent before signed links existed carry the bare address.
+    if not email and common.env("ALLOW_LEGACY_UNSUBSCRIBE") == "true":
+        email = common.clean_email(body)
+    if not email:
+        return api_response("Invalid link", 400)
+
+    # Only email people who were actually on the list.
+    if common.remove_subscriber(email):
+        html_body, text_body = common.message(["You have been unsubscribed. Come back soon!"])
+        common.send_email(email, "Unsubscribed - blog.claytondavis.dev", html_body, text_body, bcc_owner=True)
+    return api_response("Success", 200)
+
+
+ROUTES = {
+    ("POST", "/api/email/subscribe"): subscribe,
+    ("POST", "/api/email/confirm"): confirm,
+    ("DELETE", "/api/email/unsubscribe"): unsubscribe,
+}
+
 
 def sendEmail(event, context):
-    print(event)
-    print("Subject: "+event['subject'])
-    print("Body: "+event['body'])
+    """Manual send to everyone on the list. Invoke with {"subject": "...", "body": "<html>"}.
 
-    client = boto3.client('s3')
-    email_file = '/tmp/email-list.txt'
-    client.download_file(os.environ['BUCKET_NAME'], os.environ['EMAIL_LIST_KEY'], email_file)
-    
-    exists = False
-    file_input = open(email_file, 'r')
-    Lines = file_input.readlines()
-    ses_client = boto3.client('ses')
-    for line in Lines:
-        if line.strip() != '':
-            print("Emailing "+line.strip())
-            response = ses_client.send_email(
-                Source="blog-notifications@claytondavis.dev",
-                Destination={
-                    'ToAddresses': [
-                        line.strip(),
-                    ],
-                    'BccAddresses': [
-                        'blog@claytondavis.dev',
-                    ]
-                },
-                Message={
-                    'Subject': {
-                        'Data': event['subject'],
-                        'Charset': 'UTF-8'
-                    },
-                    'Body': {
-                        'Html': {
-                            'Data': event['body']+"<br /><br /><a href=\"https://blog.claytondavis.dev/unsubscribe/index.html?email="+line+"\">Unsubscribe</a>",
-                            'Charset': 'UTF-8'
-                        }
-                    }
-                },
-                ReplyToAddresses=[
-                    'blog@claytondavis.dev',
-                ]
+    New posts are emailed automatically by notify.handler; this is for one-off messages.
+    """
+    sent, failed = 0, 0
+    for email in common.load_list():
+        footer_html, footer_text = common.message([], footer=common.unsubscribe_footer(email))
+        try:
+            common.send_email(
+                email,
+                event["subject"],
+                event["body"] + footer_html,
+                common.html_to_text(event["body"]) + "\n\n" + footer_text,
             )
-            print(response)
+            sent += 1
+        except Exception as e:  # keep going so one bad address doesn't stop the rest
+            print("Failed to send to a subscriber: %s" % e)
+            failed += 1
+    print("Sent %d, failed %d" % (sent, failed))
+    return {"sent": sent, "failed": failed}

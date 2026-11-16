@@ -1,0 +1,32 @@
+{{/* Newer/older links and tag-based related posts, shown at the end of a post. */}}
+{{ $newer := .NextInSection }}
+{{ $older := .PrevInSection }}
+{{ if or $newer $older }}
+<nav class="post-nav" aria-label="More posts">
+	<div class="post-nav-newer">
+		{{ with $newer }}<span class="post-nav-label">&larr; Newer</span><a href="{{ .RelPermalink }}index.html">{{ .Title }}</a>{{ end }}
+	</div>
+	<div class="post-nav-older">
+		{{ with $older }}<span class="post-nav-label">Older &rarr;</span><a href="{{ .RelPermalink }}index.html">{{ .Title }}</a>{{ end }}
+	</div>
+</nav>
+{{ end }}
+
+{{/* Related posts, minus the ones already linked above. */}}
+{{ $skip := slice .Permalink }}
+{{ with $newer }}{{ $skip = $skip | append .Permalink }}{{ end }}
+{{ with $older }}{{ $skip = $skip | append .Permalink }}{{ end }}
+{{ $related := slice }}
+{{ range .Site.RegularPages.Related . }}
+	{{ if not (in $skip .Permalink) }}{{ $related = $related | append . }}{{ end }}
+{{ end }}
+{{ with first 3 $related }}
+<aside class="related-posts">
+	<h3>Keep reading</h3>
+	<ul class="flat">
+		{{ range . }}
+		<li><a href="{{ .RelPermalink }}index.html">{{ .Title }}</a><span class="related-date">{{ dateFormat "Jan 2006" .Date }}</span></li>
+		{{ end }}
+	</ul>
+</aside>
+{{ end }}

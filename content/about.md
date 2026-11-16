@@ -3,9 +3,7 @@ title: "About"
 type: "page"
 ---
 
-Hello world!
-
-I’m Clayton Davis—a seasoned AWS cloud consultant, technical leader and practice owner with over decade of hands-on experience helping organizations harness the power of the AWS cloud. Currently, I serve as Practice Leader for Software Engineering at [Caylent](https://caylent.com/), where I guide a talented team in delivering high-impact solutions across:
+I’m Clayton Davis—a seasoned AWS cloud consultant, technical leader and practice owner with over a decade of hands-on experience helping organizations harness the power of the AWS cloud. Currently, I serve as Practice Leader for Software Engineering at [Caylent](https://caylent.com/), where I guide a talented team in delivering high-impact solutions across:
 
 - **Application Modernization:** Re-architecting legacy systems for scale, resilience and reduced operational cost on AWS.  
 - **Product Development:** Designing and building green-field SaaS applications, from MVP through production, using serverless, container and cloud-native patterns.  
@@ -26,7 +24,7 @@ In both boardroom strategy sessions and war-room troubleshooting calls, I form s
 - **Consulting Journey:** Since 2015, I’ve navigated through engineering, architecture, delivery management and now practice leadership—each role adding new layers of insight.
 
 ### On Imperfection & Progress  
-I live by one guiding principle: “Perfection is the enemy of progress.” That keeps me shipping, iterating and learning—and it’s exactly what this blog will do. I aim to publish thoughtful pieces at least once a month, though you might see bonus posts when a hot topic or opinionated client conversation ignites something fresh.
+I live by one guiding principle: “Perfection is the enemy of progress.” That keeps me shipping, iterating and learning—and it’s exactly what this blog will do. I publish when I have something worth saying, usually when a hot topic or an opinionated client conversation ignites something fresh.
 
 I’d love to hear your thoughts or help solve your toughest cloud and AI challenges—drop me a line anytime at [blog@claytondavis.dev](mailto:blog@claytondavis.dev). Let’s keep moving forward together!  
 

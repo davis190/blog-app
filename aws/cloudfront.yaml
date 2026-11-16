@@ -30,6 +30,28 @@ Resources:
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment: string-value
+  ## The S3 origin has no directory index, so /post/slug/ and /post/slug would otherwise
+  ## fall through to the home page. Rewrite them to the page's index.html.
+  rIndexRewriteFunction:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: !Sub "${AWS::StackName}-index-rewrite"
+      AutoPublish: true
+      FunctionConfig:
+        Comment: Serve /path/ and /path as /path/index.html
+        Runtime: cloudfront-js-2.0
+      FunctionCode: |
+        function handler(event) {
+          var request = event.request;
+          var uri = request.uri;
+          var lastSegment = uri.split('/').pop();
+          if (uri.charAt(uri.length - 1) === '/') {
+            request.uri = uri + 'index.html';
+          } else if (lastSegment.indexOf('.') === -1) {
+            request.uri = uri + '/index.html';
+          }
+          return request;
+        }
   ## Cloudfront distribution
   rCloudfrontDistribution:
     Type: AWS::CloudFront::Distribution
@@ -70,6 +92,9 @@ Resources:
             - POST
             - PUT
           TargetOriginId: blog-app
+          FunctionAssociations:
+            - EventType: viewer-request
+              FunctionARN: !GetAtt rIndexRewriteFunction.FunctionMetadata.FunctionARN
           ForwardedValues:
             QueryString: 'true'
           ViewerProtocolPolicy: redirect-to-https

@@ -1,7 +1,11 @@
 ---
 title: "Unsubscribe"
 type: "page"
+layout: "email-action"
+action: "unsubscribe"
+subscribe: false
+analytics: false
+noindex: true
 ---
 
-Working to unsubscribe...
-
+Sorry to see you go.

@@ -2,7 +2,7 @@
 title: "Enabling an AI-Powered SDLC by Shifting Left"
 date: 2025-10-28T08:00:00-05:00
 draft: false
-description: "The only way to realize the full benefits of an AI-powered SDLC is to shift left and invovle product"
+description: "The only way to realize the full benefits of an AI-powered SDLC is to shift left and involve product"
 tags: [GenAI, LLM, AI-SDLC, SDLC, PDLC, Product]
 ---
 

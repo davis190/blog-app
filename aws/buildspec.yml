@@ -20,7 +20,7 @@ phases:
   build:
     commands:
       - BUCKET=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region us-east-1 --query "Stacks[].Outputs[?OutputKey=='Bucket'].OutputValue" --output text)
-      - ./hugo -D --buildDrafts
+      - ./hugo
       - aws s3 sync public/ s3://${BUCKET}/
       ## Deploy email subscription
       - cd aws/infra
@@ -32,5 +32,5 @@ phases:
       ## Invalidate cache
       ##########
       - CLOUDFRONT_DISTRIBUTION_ID=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region us-east-1 --query "Stacks[].Outputs[?OutputKey=='CloudfrontDistributionId'].OutputValue" --output text)
-      - INVALIDATION_ID=$(aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths /css/* /js/* /index.html /tags/* /about/index.html /post/* --query "Invalidation.Id" --output text)
+      - INVALIDATION_ID=$(aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths '/*' --query "Invalidation.Id" --output text)
       # - aws cloudfront wait invalidation-completed --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --id $INVALIDATION_ID

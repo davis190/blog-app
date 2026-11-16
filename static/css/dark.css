@@ -69,3 +69,19 @@ html.dark .footer {
 html.dark .highlight {
   background-color: #333;
 }
+
+html.dark .post-nav,
+html.dark .subscribe-box {
+  border-color: #333;
+}
+
+html.dark .subscribe-form input {
+  background-color: #111;
+  border-color: #444;
+  color: #ddd;
+}
+
+html.dark .subscribe-status.error,
+html.dark .email-action-message.error {
+  color: #ff6b6b;
+}
