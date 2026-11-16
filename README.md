@@ -17,6 +17,14 @@ CodePipeline / CodeBuild  (aws/buildspec.yml)
 
 Everything in AWS is deployed from this repo by the pipeline. Don't change resources by hand.
 
+The pipeline itself (CodePipeline `Blog-App`, CodeBuild `blog-app`, GitHub connection `Personal-Github`) is **not** defined in this repo; it was created by hand in 2022. Its source action has `DetectChanges` set to `true`, so a push to `main` should start it. If a push doesn't start a run, start one manually (it builds the latest `main`):
+
+```bash
+aws codepipeline start-pipeline-execution --name Blog-App --profile 210557127338_AWSAdministratorAccess --region us-east-1
+```
+
+`origin` uses the `github.com-davis190` SSH alias from `~/.ssh/config` so pushes authenticate as the repo owner.
+
 ## Email list
 
 Lives in `aws/infra/` (`template.yaml`, code in `email-list/`). Subscribers are one address per line in `email-list.txt` in the `claytondavis-dev-email-list` bucket (versioned, never deleted with the stack).
