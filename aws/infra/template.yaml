@@ -37,6 +37,14 @@ Parameters:
       Description: When "true" the new-post sender logs what it would do and sends nothing.
       AllowedValues: ["true", "false"]
       Default: "false"
+    pPipelineName:
+      Type: String
+      Description: Pipeline that builds and deploys the blog. Scheduled publishing starts it, and a failed run sends an alert.
+      Default: Blog-App
+    pAlertAddress:
+      Type: String
+      Description: Gets an email when the pipeline fails. SNS sends a confirmation link the first time; it has to be clicked.
+      Default: "blog@claytondavis.dev"
 
 # https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -188,6 +196,86 @@ Resources:
             ScheduleExpressionTimezone: America/Chicago
             RetryPolicy:
               MaximumRetryAttempts: 0
+  ###################
+  ## Scheduled publishing. Hugo leaves future-dated posts out of the build, so aws/schedule_publish.py
+  ## (run by the pipeline) creates one-off schedules in this group that start the pipeline when a post is due.
+  ## The schedules themselves are created at build time, not here.
+  ###################
+  rPublishScheduleGroup:
+    Type: AWS::Scheduler::ScheduleGroup
+    Properties:
+      Name: blog-scheduled-publish
+  rPublishSchedulerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: Lets EventBridge Scheduler start the blog pipeline when a scheduled post is due.
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
+      Policies:
+        - PolicyName: start-blog-pipeline
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: codepipeline:StartPipelineExecution
+                Resource: !Sub arn:${AWS::Partition}:codepipeline:${AWS::Region}:${AWS::AccountId}:${pPipelineName}
+  ###################
+  ## Email when the pipeline fails. A failed run can mean a scheduled post never goes live, or goes live
+  ## after the new-post email window (pNotifierMaxAgeDays) has passed.
+  ###################
+  rPipelineFailureTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: Blog pipeline failed
+      Subscription:
+        - Protocol: email
+          Endpoint: !Ref pAlertAddress
+  rPipelineFailureTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref rPipelineFailureTopic
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sns:Publish
+            Resource: !Ref rPipelineFailureTopic
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !GetAtt rPipelineFailureRule.Arn
+  rPipelineFailureRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Emails when the blog pipeline fails.
+      EventPattern:
+        source:
+          - aws.codepipeline
+        detail-type:
+          - CodePipeline Pipeline Execution State Change
+        detail:
+          state:
+            - FAILED
+          pipeline:
+            - !Ref pPipelineName
+      Targets:
+        - Id: email-owner
+          Arn: !Ref rPipelineFailureTopic
+          InputTransformer:
+            InputPathsMap:
+              pipeline: $.detail.pipeline
+              execution: $.detail.execution-id
+            InputTemplate: !Sub '"Pipeline <pipeline> failed (execution <execution>). Details: https://${AWS::Region}.console.aws.amazon.com/codesuite/codepipeline/pipelines/<pipeline>/view"'
   rBucket:
     Type: 'AWS::S3::Bucket'
     # Holds the subscriber list. Keep it if the stack is ever deleted.
@@ -210,3 +298,12 @@ Outputs:
   NewPostNotifierName:
     Description: Scheduled function that announces new posts.
     Value: !Ref rNewPostNotifier
+  PublishScheduleGroupName:
+    Description: Schedule group holding one one-off schedule per future-dated post (managed by aws/schedule_publish.py).
+    Value: !Ref rPublishScheduleGroup
+  PublishSchedulerRoleArn:
+    Description: Role the one-off schedules use to start the pipeline.
+    Value: !GetAtt rPublishSchedulerRole.Arn
+  PublishPipelineArn:
+    Description: Pipeline the one-off schedules start.
+    Value: !Sub arn:${AWS::Partition}:codepipeline:${AWS::Region}:${AWS::AccountId}:${pPipelineName}

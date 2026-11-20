@@ -51,7 +51,7 @@ What to know:
 
 - **It goes by the post's `date`**, not when you deploy. A post is announced on the next scheduled run after it's live. Only posts dated within `pNotifierMaxAgeDays` (3) are emailed; older ones are recorded as handled and skipped. That is what keeps it from emailing the whole back catalog on its first run, and it means a backdated post won't send. Use the manual function below for those.
 - **At most once.** The post is recorded before sending, and automatic retries are off. If a run dies midway, the next run will not resend; subscribers it missed need a manual send.
-- **Drafts and future-dated posts** aren't in the feed, so they're never emailed.
+- **Drafts and future-dated posts** aren't in the feed, so they're never emailed until they're live. See [Scheduling a post](#scheduling-a-post) for how a future-dated post goes live.
 - **Dry run:** set `pNotifierDryRun` to `"true"` to log what would be sent without sending or recording anything.
 - **To skip emailing a post,** there is no flag yet. Add its link to `sent-posts.json` in the bucket before the next scheduled run.
 
@@ -126,7 +126,27 @@ The pipeline runs plain `hugo`, so a post with `draft: true` is never published 
 
 ## Publishing
 
-Merge to `main`. The pipeline builds, syncs to S3, deploys the email stack, and invalidates the whole CloudFront cache. Subscribers are emailed about the new post at the next 9am, noon or 5pm Central run.
+Merge to `main`, then start the pipeline (`aws codepipeline start-pipeline-execution --name Blog-App`; pushes don't start it on their own right now). The pipeline builds, syncs to S3, deploys the email stack, arms any scheduled posts, and invalidates the whole CloudFront cache. Subscribers are emailed about the new post at the next 9am, noon or 5pm Central run.
+
+### Scheduling a post
+
+Hugo leaves a post out of the build while its `date` is in the future, so to publish later, merge the post now with a future `date` and `draft: false`:
+
+```yaml
+date: 2026-11-23T08:00:00-06:00
+draft: false
+```
+
+Then run the pipeline once (as above). After the build, `aws/schedule_publish.py` asks Hugo which posts are still in the future and creates one one-off EventBridge Scheduler schedule per post, in the `blog-scheduled-publish` group, set to start the pipeline at the post's `date`. When it fires, the rebuild includes the post, and the notifier emails subscribers at the next 9am, noon or 5pm Central run after that (the deploy takes about 5 minutes, so a post dated 8:00 is emailed at 9:00).
+
+- **The schedules are created at build time, not by the template.** The template only owns the group, the role that lets Scheduler start the pipeline, and the failure alert. To see what's armed: `aws scheduler list-schedules --group-name blog-scheduled-publish`.
+- **Several posts are fine.** Each gets its own schedule, so one failed run doesn't stop the others. Posts due at the same moment cause two pipeline runs; the second is a harmless no-op, but a few minutes apart is cleaner.
+- **Cleanup is automatic.** A schedule deletes itself after it fires, and every build deletes schedules whose post is no longer in the future (re-dated, flipped back to draft, or removed). Re-dating a post just means merging and running the pipeline again.
+- **Drafts are never armed.** `draft: true` posts aren't listed as future.
+- **A failed run sends an alert** to `pAlertAddress` (SNS email; the first time, click the confirmation link it sends). It matters because the notifier skips posts dated more than `pNotifierMaxAgeDays` (3) ago: if a scheduled build fails and nobody re-runs it within that window, the post goes live without an email.
+- **If a post is merged but the pipeline never runs,** nothing is armed and it never publishes.
+- Publish time is exact to the minute for the rebuild; the email is not (see above).
+- Check what's pending locally with `hugo list future`.
 
 ## Components worth knowing about
 

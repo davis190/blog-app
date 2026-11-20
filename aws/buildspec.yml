@@ -26,6 +26,10 @@ phases:
       - cd aws/infra
       - sam deploy --template-file template.yaml --stack-name blog-email-subscription --region us-east-1 --s3-bucket claytondavis-dev-sam-bucket --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset
       - cd ../..
+      ## Arm one-off schedules that rebuild the site when a future-dated post comes due. Needs the stack above
+      ## (it owns the schedule group and role), and fails the build if a post can't be armed.
+      - python3 -m pip install --quiet --upgrade boto3
+      - python3 aws/schedule_publish.py --hugo ./hugo --stack blog-email-subscription
   post_build:
     commands:
       ##########
