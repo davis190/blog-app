@@ -36,7 +36,7 @@ Parameters:
       Type: String
       Description: When "true" the new-post sender logs what it would do and sends nothing.
       AllowedValues: ["true", "false"]
-      Default: "false"
+      Default: "true"
     pPipelineName:
       Type: String
       Description: Pipeline that builds and deploys the blog. Scheduled publishing starts it, and a failed run sends an alert.
